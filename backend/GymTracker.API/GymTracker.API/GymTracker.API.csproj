@@ -16,10 +16,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\GymTracker.Application\GymTracker.Application.csproj" />
     <ProjectReference Include="..\GymTracker.Infrastructure\GymTracker.Infrastructure.csproj" />
   </ItemGroup>
