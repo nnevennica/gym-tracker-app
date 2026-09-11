@@ -1,0 +1,108 @@
+:root {
+    --primary-color: #d8829d;
+    --primary-hover: #c46b86;
+    --accent-purple: #9d81ba;
+    --bg-main: #f4f6f9;
+    --text-color: #2b2d42; 
+}
+
+body {
+    background-color: var(--bg-main);
+    min-height: 100vh;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    color: var(--text-color);
+}
+
+.navbar {
+    background: #ffffff !important;
+    border-bottom: 2px solid #eaeaea;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.navbar-brand {
+    color: var(--primary-hover) !important;
+    font-size: 1.4rem;
+    letter-spacing: -0.5px;
+}
+
+.card {
+    border: 1px solid #eef0f4;
+    border-radius: 12px;
+    background: #ffffff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    border-radius: 8px;
+    font-weight: 600;
+    padding: 9px 16px;
+    color: #ffffff;
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-hover);
+    border-color: var(--primary-hover);
+}
+
+.btn-success {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    color: #ffffff;
+    font-weight: 600;
+    border-radius: 8px;
+    padding: 10px;
+}
+
+.btn-success:hover {
+    background-color: var(--primary-hover);
+    border-color: var(--primary-hover);
+    color: #ffffff;
+}
+
+.form-control, .form-select {
+    border-radius: 8px;
+    border: 1px solid #dce1e7;
+    padding: 8px 12px;
+    font-size: 0.95rem;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(216, 130, 157, 0.2);
+}
+
+.table {
+    border-color: #eef0f4;
+}
+
+.table-dark {
+    background-color: #4a4e69 !important; 
+    color: #ffffff;
+}
+
+.table th {
+    font-weight: 600;
+    font-size: 0.9rem;
+    border: none;
+}
+
+.table-hover tbody tr:hover {
+    background-color: #fcf6f8;
+}
+
+.badge.bg-primary {
+    background-color: #e8aece !important;
+    color: #333333;
+}
+
+.badge.bg-warning {
+    background-color: #f7d6c8 !important;
+    color: #333333;
+}
+
+.badge.bg-info {
+    background-color: #d6c7ff !important;
+    color: #333333;
+}
