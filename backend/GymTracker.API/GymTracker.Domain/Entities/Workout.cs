@@ -14,7 +14,7 @@ public class Workout
     public int FatigueRating { get; private set; }
     public string? Notes { get; private set; }
 
-    private Workout() { } // Za Entity Framework
+    private Workout() { }
 
     public Workout(Guid userId, Guid exerciseTypeId, DateTime dateTime, int durationMinutes, int caloriesBurned, int intensityRating, int fatigueRating, string? notes)
     {
