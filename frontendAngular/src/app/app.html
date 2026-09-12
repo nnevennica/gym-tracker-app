@@ -1,0 +1,148 @@
+<nav class="navbar navbar-expand-lg navbar-light mb-4">
+  <div class="container">
+    <a class="navbar-brand fw-bold" href="#">GymTracker</a>
+    <button *ngIf="currentUserId" class="btn btn-outline-danger btn-sm" (click)="logout()">Odjava</button>
+  </div>
+</nav>
+
+<div class="container">
+  <!-- sekcija auth -->
+  <div *ngIf="!currentUserId" class="row justify-content-center">
+    <div class="col-md-5">
+      <div class="card shadow-sm p-4">
+        <h3 class="text-center mb-3">{{ isRegisterMode ? 'Registracija' : 'Prijava' }}</h3>
+        
+        <form (ngSubmit)="handleAuth()">
+          <div *ngIf="isRegisterMode">
+            <div class="mb-3">
+              <label class="form-label">Ime</label>
+              <input type="text" [(ngModel)]="firstName" name="firstName" class="form-control" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Prezime</label>
+              <input type="text" [(ngModel)]="lastName" name="lastName" class="form-control" required>
+            </div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Email adresa</label>
+            <input type="email" [(ngModel)]="email" name="email" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Lozinka</label>
+            <input type="password" [(ngModel)]="password" name="password" class="form-control" required>
+          </div>
+          <button type="submit" class="btn btn-primary w-100">
+            {{ isRegisterMode ? 'Registruj se' : 'Prijavi se' }}
+          </button>
+        </form>
+
+        <div class="text-center mt-3">
+          <button class="btn btn-link btn-sm text-decoration-none text-muted" (click)="toggleAuthMode()">
+            {{ isRegisterMode ? 'Već imate nalog? Prijavite se' : 'Nemate nalog? Registrujte se' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- sekcija dash -->
+  <div *ngIf="currentUserId" class="row">
+    <!-- Unos Treninga -->
+    <div class="col-md-5 mb-4">
+      <div class="card shadow-sm p-4">
+        <h4 class="mb-3">Beleženje Treninga</h4>
+        <form (ngSubmit)="saveWorkout()">
+          <div class="mb-3">
+            <label class="form-label">Vrsta vežbe</label>
+            <select [(ngModel)]="exerciseTypeId" name="exerciseTypeId" class="form-select" required>
+              <option value="11111111-1111-1111-1111-111111111111">Kardio</option>
+              <option value="22222222-2222-2222-2222-222222222222">Trening snage</option>
+              <option value="33333333-3333-3333-3333-333333333333">Fleksibilnost</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Datum i Vreme</label>
+            <input type="datetime-local" [(ngModel)]="dateTime" name="dateTime" class="form-control" required>
+          </div>
+          <div class="row">
+            <div class="col-6 mb-3">
+              <label class="form-label">Trajanje (min)</label>
+              <input type="number" [(ngModel)]="durationMinutes" name="durationMinutes" class="form-control" min="1" required>
+            </div>
+            <div class="col-6 mb-3">
+              <label class="form-label">Kalorije (kcal)</label>
+              <input type="number" [(ngModel)]="caloriesBurned" name="caloriesBurned" class="form-control" min="0" required>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-6 mb-3">
+              <label class="form-label">Težina (1-10)</label>
+              <input type="number" [(ngModel)]="intensityRating" name="intensityRating" class="form-control" min="1" max="10" required>
+            </div>
+            <div class="col-6 mb-3">
+              <label class="form-label">Umor (1-10)</label>
+              <input type="number" [(ngModel)]="fatigueRating" name="fatigueRating" class="form-control" min="1" max="10" required>
+            </div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Beleške</label>
+            <textarea [(ngModel)]="notes" name="notes" class="form-control" rows="2"></textarea>
+          </div>
+          <button type="submit" class="btn btn-success w-100">Sačuvaj Trening</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- tabelica -desno-  -->
+    <div class="col-md-7">
+      <div class="card shadow-sm p-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h4>Napredak po Nedeljama</h4>
+          <div class="d-flex gap-2">
+            <input type="number" [(ngModel)]="filterYear" (change)="loadProgress()" name="filterYear" class="form-control form-control-sm" style="width: 90px;">
+            <select [(ngModel)]="filterMonth" (change)="loadProgress()" name="filterMonth" class="form-select form-select-sm" style="width: 120px;">
+              <option [value]="1">Januar</option>
+              <option [value]="2">Februar</option>
+              <option [value]="3">Mart</option>
+              <option [value]="4">April</option>
+              <option [value]="5">Maj</option>
+              <option [value]="6">Jun</option>
+              <option [value]="7">Jul</option>
+              <option [value]="8">Avgust</option>
+              <option [value]="9">Septembar</option>
+              <option [value]="10">Oktobar</option>
+              <option [value]="11">Novembar</option>
+              <option [value]="12">Decembar</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="table-responsive">
+          <table class="table table-hover align-middle">
+            <thead class="table-dark">
+              <tr>
+                <th>Nedelja</th>
+                <th>Br. Treninga</th>
+                <th>Ukupno (min)</th>
+                <th>Prosečna Težina</th>
+                <th>Prosečan Umor</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let stat of weeklyStats">
+                <td><strong>Nedelja {{ stat.weekNumber }}</strong></td>
+                <td><span class="badge bg-primary">{{ stat.totalWorkouts }}</span></td>
+                <td>{{ stat.totalDurationMinutes }} min</td>
+                <td><span class="badge bg-warning text-dark">{{ stat.averageIntensity }} / 10</span></td>
+                <td><span class="badge bg-info text-dark">{{ stat.averageFatigue }} / 10</span></td>
+              </tr>
+              <tr *ngIf="weeklyStats.length === 0">
+                <td colspan="5" class="text-center text-muted">Nema unetih treninga za izabrani mesec.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
