@@ -37,13 +37,19 @@ public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, R
             return Result<string>.Failure(errors);
         }
 
-        // slanje mail-a
-        await _emailService.SendEmailAsync(
-            user.Email,
-            "Dobrodošli u GymTracker!",
-            $"Zdravo {request.FirstName},\n\nVaš nalog za praćenje treninga je uspešno kreiran!",
-            cancellationToken
-        );
+        try
+        {
+            await _emailService.SendEmailAsync(
+                user.Email!,
+                "Dobrodošli u GymTracker!",
+                $"Zdravo {request.FirstName},\n\nVaš nalog za praćenje treninga je uspešno kreiran!",
+                cancellationToken
+            );
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"[SendGrid Error]: {ex.Message}");
+        }
 
         return Result<string>.Success(user.Id);
     }
