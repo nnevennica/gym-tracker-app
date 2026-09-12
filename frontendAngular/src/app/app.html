@@ -6,7 +6,7 @@
 </nav>
 
 <div class="container">
-  <!-- sekcija auth -->
+  <!-- Sekcija Auth -->
   <div *ngIf="!currentUserId" class="row justify-content-center">
     <div class="col-md-5">
       <div class="card shadow-sm p-4">
@@ -45,9 +45,9 @@
     </div>
   </div>
 
-  <!-- sekcija dash -->
+  <!-- Dashboard -->
   <div *ngIf="currentUserId" class="row">
-    <!-- Unos Treninga -->
+    <!-- leva kolona (unos) -->
     <div class="col-md-5 mb-4">
       <div class="card shadow-sm p-4">
         <h4 class="mb-3">Beleženje Treninga</h4>
@@ -93,9 +93,10 @@
       </div>
     </div>
 
-    <!-- tabelica -desno-  -->
+    <!-- desna kolona -->
     <div class="col-md-7">
-      <div class="card shadow-sm p-4">
+      <!-- Ttabela statistike -->
+      <div class="card shadow-sm p-4 mb-4">
         <div class="d-flex justify-content-between align-items-center mb-3">
           <h4>Napredak po Nedeljama</h4>
           <div class="d-flex gap-2">
@@ -142,6 +143,85 @@
             </tbody>
           </table>
         </div>
+      </div>
+
+      <!--dodatno, upotpunjuje stranicu -->
+      <div class="row">
+        <!-- profil + week cilj -->
+        <div class="col-md-6 mb-3">
+          <div class="card p-3 shadow-sm border-0 h-100">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h6 class="fw-bold mb-0" style="color: #4a4e69;">Fitness profil & cilj</h6>
+              <button class="btn btn-link btn-sm p-0 text-decoration-none" (click)="openProfileModal()" style="color: #d8829d; font-weight: 600;">Izmeni</button>
+            </div>
+            <div class="d-flex justify-content-between mb-2 text-muted small">
+              <span>Visina: <strong>{{ heightCm }} cm</strong></span>
+              <span>Težina: <strong>{{ weightKg }} kg</strong></span>
+            </div>
+            <hr class="my-2 text-muted opacity-25">
+            <div class="mt-2">
+              <div class="d-flex justify-content-between align-items-center mb-1">
+                <span class="small fw-semibold">Nedeljni cilj ({{ getLatestWorkoutCount() }}/{{ weeklyGoalWorkouts }} treninga)</span>
+                <span class="small badge bg-secondary">{{ getGoalPercentage() }}%</span>
+              </div>
+              <div class="progress" style="height: 8px;">
+                <div class="progress-bar" role="progressbar" 
+                     [style.width.%]="getGoalPercentage()" 
+                     style="background-color: #d8829d;"
+                     [attr.aria-valuenow]="getGoalPercentage()" aria-valuemin="0" aria-valuemax="100">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Smart insights -->
+        <div class="col-md-6 mb-3">
+          <div class="card p-3 shadow-sm border-0 h-100">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <h6 class="fw-bold mb-0" style="color: #4a4e69;">Analiza i saveti</h6>
+              <span class="badge rounded-pill" [ngClass]="{
+                'bg-warning text-dark': getSmartInsight().status === 'Potreban odmor',
+                'bg-success': getSmartInsight().status === 'Optimalna forma',
+                'bg-info text-dark': getSmartInsight().status === 'Uravnoteženo',
+                'bg-secondary': getSmartInsight().status === 'Čeka se unos'
+              }">{{ getSmartInsight().status }}</span>
+            </div>
+            <p class="small text-muted mb-0 mt-2">
+              {{ getSmartInsight().text }}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- izmena profila  -->
+<div *ngIf="showProfileModal" class="modal fade show d-block" tabindex="-1" style="background: rgba(0,0,0,0.5);">
+  <div class="modal-dialog modal-dialog-centered modal-sm">
+    <div class="modal-content border-0 shadow">
+      <div class="modal-header border-0 pb-0">
+        <h5 class="modal-header-title fw-bold fs-6">Izmena</h5>
+        <button type="button" class="btn-close" (click)="closeProfileModal()"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <label class="form-label small text-muted">Visina (cm)</label>
+          <input type="number" [(ngModel)]="editHeight" class="form-control form-control-sm">
+        </div>
+        <div class="mb-3">
+          <label class="form-label small text-muted">Težina (kg)</label>
+          <input type="number" [(ngModel)]="editWeight" class="form-control form-control-sm">
+        </div>
+        <div class="mb-3">
+          <label class="form-label small text-muted">Nedeljni cilj (broj treninga)</label>
+          <input type="number" [(ngModel)]="editGoal" min="1" max="14" class="form-control form-control-sm">
+        </div>
+      </div>
+      <div class="modal-footer border-0 pt-0">
+        <button type="button" class="btn btn-light btn-sm" (click)="closeProfileModal()">Otkaži</button>
+        <button type="button" class="btn btn-primary btn-sm" (click)="saveProfile()">Sačuvaj</button>
       </div>
     </div>
   </div>
