@@ -1,6 +1,21 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
+
+export interface WeeklyStats {
+  weekNumber: number;
+  totalWorkouts: number;
+  totalDurationMinutes: number;
+  averageIntensity: number;
+  averageFatigue: number;
+}
+
+export interface MonthlyProgressResponse {
+  userId: string;
+  year: number;
+  month: number;
+  weeklyStats: WeeklyStats[];
+}
 
 export interface WorkoutPayload {
   userId: string;
@@ -13,20 +28,15 @@ export interface WorkoutPayload {
   notes?: string;
 }
 
-export interface WeeklyStats {
-  weekNumber: number;
-  startOfWeek: string;
-  endOfWeek: string;
-  totalWorkouts: number;
-  totalDurationMinutes: number;
-  averageIntensity: number;
-  averageFatigue: number;
-}
-
-export interface MonthlyProgress {
-  year: number;
-  month: number;
-  weeklyStats: WeeklyStats[];
+export interface WorkoutItem {
+  id: string;
+  exerciseTypeName: string;
+  dateTime: string;
+  durationMinutes: number;
+  caloriesBurned: number;
+  intensityRating: number;
+  fatigueRating: number;
+  notes?: string;
 }
 
 @Injectable({
@@ -37,11 +47,27 @@ export class WorkoutService {
 
   constructor(private http: HttpClient) {}
 
-  createWorkout(payload: WorkoutPayload): Observable<{ id: string }> {
-    return this.http.post<{ id: string }>(this.apiUrl, payload);
+  createWorkout(payload: WorkoutPayload): Observable<any> {
+    return this.http.post(this.apiUrl, payload);
   }
 
-  getMonthlyProgress(userId: string, year: number, month: number): Observable<MonthlyProgress> {
-    return this.http.get<MonthlyProgress>(`${this.apiUrl}/progress?userId=${userId}&year=${year}&month=${month}`);
+  getMonthlyProgress(userId: string, year: number, month: number): Observable<MonthlyProgressResponse> {
+    const params = new HttpParams()
+      .set('userId', userId)
+      .set('year', year.toString())
+      .set('month', month.toString());
+
+    // Vraćeno na staru rutu sa kojom radi backend controller
+    return this.http.get<MonthlyProgressResponse>(`${this.apiUrl}/progress`, { params });
+  }
+
+  getWorkoutsForWeek(userId: string, year: number, month: number, weekNumber: number): Observable<WorkoutItem[]> {
+    const params = new HttpParams()
+      .set('userId', userId)
+      .set('year', year.toString())
+      .set('month', month.toString())
+      .set('weekNumber', weekNumber.toString());
+
+    return this.http.get<WorkoutItem[]>(`${this.apiUrl}/weekly-details`, { params });
   }
 }

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { WorkoutService, WeeklyStats, WorkoutPayload } from './services/workout.service';
+import { WorkoutService, WeeklyStats, WorkoutPayload, WorkoutItem } from './services/workout.service';
 import { AuthService } from './services/auth.service';
 
 @Component({
@@ -15,24 +15,24 @@ export class AppComponent implements OnInit {
   isRegisterMode = false;
   currentUserId: string | null = localStorage.getItem('userId');
 
-  // forma auth
+//auth forma
   email = '';
   password = '';
   firstName = '';
   lastName = '';
 
-  // profil
+//profil
   heightCm: number = Number(localStorage.getItem('heightCm')) || 172;
   weightKg: number = Number(localStorage.getItem('weightKg')) || 64;
   weeklyGoalWorkouts: number = Number(localStorage.getItem('weeklyGoalWorkouts')) || 4;
 
-  // forma profila
+//profil modal
   showProfileModal = false;
   editHeight = this.heightCm;
   editWeight = this.weightKg;
   editGoal = this.weeklyGoalWorkouts;
 
-  // forma workout
+//forma workout
   exerciseTypeId = '11111111-1111-1111-1111-111111111111';
   dateTime = new Date().toISOString().slice(0, 16);
   durationMinutes = 45;
@@ -41,14 +41,19 @@ export class AppComponent implements OnInit {
   fatigueRating = 5;
   notes = '';
 
-  //tabela i filteri
+//tabel
   filterYear = 2026;
   filterMonth = 9;
   weeklyStats: WeeklyStats[] = [];
 
+//detalji
+  showWeeklyDetailsModal = false;
+  selectedWeekNumber: number | null = null;
+  selectedWeekWorkouts: WorkoutItem[] = [];
+
   constructor(
     private workoutService: WorkoutService,
-    private authService: AuthService
+    private authService : AuthService
   ) {}
 
   ngOnInit(): void {
@@ -80,7 +85,7 @@ export class AppComponent implements OnInit {
         error: (err: any) => alert(err.error?.error || 'Greška pri registraciji.')
       });
     } else {
-      this.currentUserId = '00000000-0000-0000-0000-000000000001';
+      this.currentUserId = '8a8a587d-394d-4722-8511-ffee209e4d5e';
       localStorage.setItem('userId', this.currentUserId);
       this.loadProgress();
     }
@@ -114,6 +119,27 @@ export class AppComponent implements OnInit {
     this.showProfileModal = false;
   }
 
+    openWeeklyDetails(weekNumber: number): void {
+  if (!this.currentUserId) return;
+  
+  this.selectedWeekNumber = weekNumber;
+
+  this.workoutService.getWorkoutsForWeek(this.currentUserId, this.filterYear, this.filterMonth, weekNumber).subscribe({
+    next: (workouts: WorkoutItem[]) => {
+      this.selectedWeekWorkouts = workouts || [];
+      this.showWeeklyDetailsModal = true;
+    },
+    error: () => {
+      this.selectedWeekWorkouts = [];
+      this.showWeeklyDetailsModal = true;
+    }
+  });
+  }
+
+  closeWeeklyDetailsModal(): void {
+    this.showWeeklyDetailsModal = false;
+  }
+
   saveWorkout(): void {
     if (!this.currentUserId) return;
 
@@ -142,7 +168,7 @@ export class AppComponent implements OnInit {
     if (!this.currentUserId) return;
 
     this.workoutService.getMonthlyProgress(this.currentUserId, this.filterYear, this.filterMonth).subscribe({
-      next: (res) => this.weeklyStats = res.weeklyStats,
+      next: (res: any) => this.weeklyStats = res.weeklyStats || [],
       error: () => this.weeklyStats = []
     });
   }

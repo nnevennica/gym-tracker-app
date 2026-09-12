@@ -6,7 +6,7 @@
 </nav>
 
 <div class="container">
-  <!-- Sekcija Auth -->
+  <!--auth -->
   <div *ngIf="!currentUserId" class="row justify-content-center">
     <div class="col-md-5">
       <div class="card shadow-sm p-4">
@@ -45,9 +45,9 @@
     </div>
   </div>
 
-  <!-- Dashboard -->
+  <!-- dash -->
   <div *ngIf="currentUserId" class="row">
-    <!-- leva kolona (unos) -->
+    <!-- levo - unos -->
     <div class="col-md-5 mb-4">
       <div class="card shadow-sm p-4">
         <h4 class="mb-3">Beleženje Treninga</h4>
@@ -93,9 +93,9 @@
       </div>
     </div>
 
-    <!-- desna kolona -->
+    <!-- desno -->
     <div class="col-md-7">
-      <!-- Ttabela statistike -->
+      <!-- ned statistika -->
       <div class="card shadow-sm p-4 mb-4">
         <div class="d-flex justify-content-between align-items-center mb-3">
           <h4>Napredak po Nedeljama</h4>
@@ -130,8 +130,8 @@
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let stat of weeklyStats">
-                <td><strong>Nedelja {{ stat.weekNumber }}</strong></td>
+              <tr *ngFor="let stat of weeklyStats" (click)="openWeeklyDetails(stat.weekNumber)" style="cursor: pointer;">
+                <td><strong>Nedelja {{ stat.weekNumber }}</strong> <small class="text-muted ms-1">(🔍)</small></td>
                 <td><span class="badge bg-primary">{{ stat.totalWorkouts }}</span></td>
                 <td>{{ stat.totalDurationMinutes }} min</td>
                 <td><span class="badge bg-warning text-dark">{{ stat.averageIntensity }} / 10</span></td>
@@ -145,13 +145,13 @@
         </div>
       </div>
 
-      <!--dodatno, upotpunjuje stranicu -->
+      <!-- dodatak -->
       <div class="row">
-        <!-- profil + week cilj -->
+        <!-- profil i cilj -->
         <div class="col-md-6 mb-3">
           <div class="card p-3 shadow-sm border-0 h-100">
             <div class="d-flex justify-content-between align-items-center mb-3">
-              <h6 class="fw-bold mb-0" style="color: #4a4e69;">Fitness profil & cilj</h6>
+              <h6 class="fw-bold mb-0" style="color: #4a4e69;">Fitness Profil & Cilj</h6>
               <button class="btn btn-link btn-sm p-0 text-decoration-none" (click)="openProfileModal()" style="color: #d8829d; font-weight: 600;">Izmeni</button>
             </div>
             <div class="d-flex justify-content-between mb-2 text-muted small">
@@ -175,11 +175,11 @@
           </div>
         </div>
 
-        <!-- Smart insights -->
+        <!-- Pametni saveti -->
         <div class="col-md-6 mb-3">
           <div class="card p-3 shadow-sm border-0 h-100">
             <div class="d-flex justify-content-between align-items-center mb-2">
-              <h6 class="fw-bold mb-0" style="color: #4a4e69;">Analiza i saveti</h6>
+              <h6 class="fw-bold mb-0" style="color: #4a4e69;">Pametni Saveti</h6>
               <span class="badge rounded-pill" [ngClass]="{
                 'bg-warning text-dark': getSmartInsight().status === 'Potreban odmor',
                 'bg-success': getSmartInsight().status === 'Optimalna forma',
@@ -197,12 +197,12 @@
   </div>
 </div>
 
-<!-- izmena profila  -->
+<!-- izmena  -->
 <div *ngIf="showProfileModal" class="modal fade show d-block" tabindex="-1" style="background: rgba(0,0,0,0.5);">
   <div class="modal-dialog modal-dialog-centered modal-sm">
     <div class="modal-content border-0 shadow">
       <div class="modal-header border-0 pb-0">
-        <h5 class="modal-header-title fw-bold fs-6">Izmena</h5>
+        <h5 class="modal-title fw-bold fs-6">Izmena Profila</h5>
         <button type="button" class="btn-close" (click)="closeProfileModal()"></button>
       </div>
       <div class="modal-body">
@@ -222,6 +222,44 @@
       <div class="modal-footer border-0 pt-0">
         <button type="button" class="btn btn-light btn-sm" (click)="closeProfileModal()">Otkaži</button>
         <button type="button" class="btn btn-primary btn-sm" (click)="saveProfile()">Sačuvaj</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- detaljnije o tr -->
+<div *ngIf="showWeeklyDetailsModal" class="modal fade show d-block" tabindex="-1" style="background: rgba(0,0,0,0.5);">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content border-0 shadow">
+      <div class="modal-header border-0 pb-0">
+        <h5 class="modal-title fw-bold fs-5">Pregled treninga — Nedelja {{ selectedWeekNumber }}</h5>
+        <button type="button" class="btn-close" (click)="closeWeeklyDetailsModal()"></button>
+      </div>
+      <div class="modal-body">
+        <div *ngIf="selectedWeekWorkouts.length === 0" class="text-center text-muted py-3">
+          Nema pojedinačnih zapisa za ovu nedelju.
+        </div>
+        
+        <div class="list-group list-group-flush" *ngIf="selectedWeekWorkouts.length > 0">
+          <div *ngFor="let item of selectedWeekWorkouts" class="list-group-item px-0 py-3 border-bottom">
+            <div class="d-flex justify-content-between align-items-center mb-1">
+              <h6 class="mb-0 fw-bold text-dark">{{ item.exerciseTypeName }}</h6>
+              <small class="text-muted">{{ item.dateTime | date:'dd.MM.yyyy. HH:mm' }}</small>
+            </div>
+            <div class="d-flex gap-3 text-muted small my-2">
+              <span>Trajanje: <strong>{{ item.durationMinutes }} min</strong></span>
+              <span>Kalorije: <strong>{{ item.caloriesBurned }} kcal</strong></span>
+              <span>Težina: <strong>{{ item.intensityRating }}/10</strong></span>
+              <span>Umor: <strong>{{ item.fatigueRating }}/10</strong></span>
+            </div>
+            <p *ngIf="item.notes" class="small mb-0 text-secondary bg-light p-2 rounded italic">
+              💬 <em>"{{ item.notes }}"</em>
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer border-0 pt-0">
+        <button type="button" class="btn btn-secondary btn-sm px-4" (click)="closeWeeklyDetailsModal()">Zatvori</button>
       </div>
     </div>
   </div>

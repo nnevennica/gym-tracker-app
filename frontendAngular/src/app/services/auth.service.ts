@@ -2,15 +2,27 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
+export interface RegisterPayload {
+  email: string;
+  password: string;
+  firstName: string;
+  lastName: string;
+}
+
+export interface RegisterResponse {
+  message: string;
+  userId: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private readonly apiUrl = 'https://localhost:7096/api/auth';
+  private apiUrl = 'https://localhost:7096/api/auth';
 
   constructor(private http: HttpClient) {}
 
-  register(userData: any): Observable<{ message: string; userId: string }> {
-    return this.http.post<{ message: string; userId: string }>(`${this.apiUrl}/register`, userData);
+  register(payload: RegisterPayload): Observable<RegisterResponse> {
+    return this.http.post<RegisterResponse>(`${this.apiUrl}/register`, payload);
   }
 }
